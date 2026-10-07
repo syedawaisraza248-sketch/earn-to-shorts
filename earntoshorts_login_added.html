@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>EarnToShorts — Daily Rewards</title>
+<style>
+:root{--primary:#5b5cf0;--purple:#8b5cf6;--dark:#171827;--muted:#74768a;--bg:#f6f7fb;--card:#fff;--border:#e8e9f2;--green:#16a34a;--red:#dc2626}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--dark)}
+button,input,select{font:inherit}.top{height:68px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:20}
+.logo{font-weight:900;font-size:21px}.logo span{color:var(--primary)}.balance-top{font-weight:900;background:#f1f0ff;padding:10px 15px;border-radius:14px;color:var(--primary)}
+.layout{display:flex;min-height:calc(100vh - 68px)}.side{width:230px;background:#fff;border-right:1px solid var(--border);padding:18px 12px;position:fixed;top:68px;bottom:0}
+.side button{width:100%;border:0;background:transparent;text-align:left;padding:13px 14px;border-radius:12px;margin:3px 0;cursor:pointer;color:#505267;font-weight:700}
+.side button:hover,.side button.active{background:#f0efff;color:var(--primary)}
+.main{margin-left:230px;width:calc(100% - 230px);padding:26px;max-width:1400px}.page{display:none}.page.active{display:block}
+.heading{font-size:27px;margin:0 0 6px}.muted{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:0 7px 25px rgba(30,30,60,.04)}
+.balance{font-size:39px;font-weight:950;margin:10px 0;color:var(--primary)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{background:#f8f8fc;border:1px solid var(--border);padding:15px;border-radius:15px}.stat strong{display:block;font-size:21px;margin-top:5px}
+.btn{border:0;border-radius:13px;padding:12px 17px;background:var(--primary);color:#fff;font-weight:800;cursor:pointer}.btn:hover{opacity:.92}.btn.secondary{background:#eeeef7;color:#303145}.btn.green{background:var(--green)}
+.pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#f0efff;color:var(--primary);font-size:11px;font-weight:900;letter-spacing:.4px}
+.streak-card{background:linear-gradient(135deg,#ffffff 0%,#f6f3ff 55%,#f0edff 100%);position:relative;overflow:hidden}
+.streak-card:after{content:"";position:absolute;width:170px;height:170px;border-radius:50%;right:-70px;top:-75px;background:rgba(139,92,246,.09)}
+.streak-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;position:relative;z-index:1}
+.today-box{background:#fff;border:1px solid var(--border);padding:11px 15px;border-radius:15px;text-align:center;min-width:115px;box-shadow:0 5px 18px rgba(60,40,120,.06)}
+.today-box small{display:block;color:var(--muted);font-weight:800;font-size:10px}.today-box strong{font-size:25px;color:var(--primary)}
+.streak-days{display:grid;grid-template-columns:repeat(7,1fr);gap:9px;margin:22px 0;position:relative;z-index:1}
+.day{background:#fff;border:1px solid var(--border);border-radius:15px;padding:12px 7px;text-align:center}.day.current{border:2px solid var(--primary);box-shadow:0 7px 20px rgba(91,92,240,.12)}.day.done{background:#f1fdf5;border-color:#bde9ca}.day .dayno{font-size:10px;font-weight:900;color:var(--muted)}.day .coin{font-size:18px;margin:6px 0}.day strong{font-size:13px}
+.progress{height:9px;background:#e7e7f1;border-radius:30px;overflow:hidden}.progress>div{height:100%;width:14%;background:linear-gradient(90deg,var(--primary),var(--purple));border-radius:30px}
+.reward-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:16px;flex-wrap:wrap}
+.social-wrap{margin-top:21px;padding-top:18px;border-top:1px solid var(--border)}.social-title{font-weight:900;margin-bottom:10px}.socials{display:flex;gap:10px;flex-wrap:wrap}
+.social{display:inline-flex;align-items:center;gap:8px;text-decoration:none;padding:10px 13px;border-radius:12px;background:#fff;border:1px solid var(--border);color:#34364a;font-weight:800}.social:hover{border-color:#b9b8f6;color:var(--primary)}
+.spin-card{background:linear-gradient(135deg,#fff,#fff8ed)}.spin-wheel{width:165px;height:165px;border-radius:50%;margin:12px auto 18px;background:conic-gradient(#ececf7 0 25%,#fff 25% 50%,#ececf7 50% 75%,#fff 75% 100%);border:10px solid #fff;box-shadow:0 8px 25px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;position:relative}.spin-wheel:before{content:"🎁";font-size:44px}.spin-pointer{width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:18px solid #f59e0b;position:absolute;top:-16px;left:calc(50% - 10px)}
+.spin-prizes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.prize{border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center;background:#fff;font-weight:900}
+.video{display:flex;justify-content:space-between;gap:15px;align-items:center;border:1px solid var(--border);border-radius:15px;padding:14px;margin:10px 0}.video h3{margin:0 0 4px}
+.form{display:grid;gap:11px}.form input,.form select{width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;outline:none}
+.history{max-height:310px;overflow:auto}.history-item{padding:12px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:10px}.plus{color:var(--green);font-weight:900}.minus{color:var(--red);font-weight:900}
+.modal{display:none;position:fixed;inset:0;background:rgba(15,15,30,.55);align-items:center;justify-content:center;padding:18px;z-index:100}.modal.show{display:flex}.modal-box{background:#fff;border-radius:20px;padding:22px;width:min(420px,100%)}.modal-box h2{margin-top:0}.close{float:right;border:0;background:#eee;border-radius:50%;width:32px;height:32px;cursor:pointer}
+.mobile-nav{display:none}
+.toast{position:fixed;right:20px;bottom:20px;background:#171827;color:#fff;padding:13px 17px;border-radius:13px;z-index:200;display:none;box-shadow:0 10px 25px rgba(0,0,0,.2)}
+.admin-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:800px){.side{display:none}.main{margin-left:0;width:100%;padding:18px 14px 90px}.mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);z-index:50;justify-content:space-around;padding:8px}.mobile-nav button{border:0;background:none;font-size:11px;font-weight:800;color:#555;padding:7px}.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.streak-days{grid-template-columns:repeat(4,1fr)}.admin-grid{grid-template-columns:1fr}}
+@media(max-width:450px){.top{padding:0 13px}.balance-top{font-size:12px;padding:8px 10px}.heading{font-size:23px}.streak-head{flex-direction:column}.today-box{width:100%;text-align:left}.reward-bottom{align-items:stretch}.reward-bottom .btn{width:100%}.spin-prizes{grid-template-columns:repeat(2,1fr)}}
+.auth-btn{border:0;border-radius:12px;padding:10px 14px;background:#171827;color:#fff;font-weight:800;cursor:pointer}.auth-overlay{display:none;position:fixed;inset:0;background:rgba(15,15,30,.55);align-items:center;justify-content:center;padding:18px;z-index:150}.auth-overlay.show{display:flex}.auth-box{background:#fff;border-radius:20px;padding:22px;width:min(430px,100%);box-shadow:0 20px 60px rgba(0,0,0,.18)}.auth-tabs{display:flex;gap:8px;margin:12px 0}.auth-tab{flex:1;padding:10px;border:1px solid var(--border);background:#fff;border-radius:10px;font-weight:800;cursor:pointer}.auth-tab.active{background:#f0efff;color:var(--primary);border-color:#c9c8ff}.google-btn{width:100%;padding:12px;border:1px solid #d9d9e5;background:#fff;border-radius:12px;font-weight:900;cursor:pointer}.auth-divider{text-align:center;color:var(--muted);font-size:12px;margin:12px 0}</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="logo">Earn<span>ToShorts</span></div>
+  <div style="display:flex;align-items:center;gap:10px"><button class="auth-btn" onclick="openAuth()">🔐 Login / Register</button><div class="balance-top">💰 Rs. <span id="topBalance">0</span></div></div>
+</header>
+
+<div class="layout">
+<aside class="side">
+  <button onclick="go('dashboard')" class="active">🏠 Dashboard</button>
+  <button onclick="go('shorts')">🎬 Shorts</button>
+  <button onclick="go('rewards')">🎁 Rewards</button>
+  <button onclick="go('wallet')">💰 Wallet</button>
+  <button onclick="go('withdraw')">💸 Withdraw</button>
+  <button onclick="go('about')">ℹ️ About</button>
+  <button onclick="openAdmin()">🔐 Admin</button>
+</aside>
+
+<main class="main">
+<section id="dashboard" class="page active">
+  <h1 class="heading">Dashboard</h1><p class="muted">Welcome to EarnToShorts.</p>
+  <div class="card">
+    <div class="pill">MY BALANCE</div><div class="balance">Rs. <span id="balance">0</span></div>
+    <div class="stats">
+      <div class="stat">🎬 Watched<strong id="watched">0</strong></div>
+      <div class="stat">🎁 Rewards<strong id="rewardsCount">0</strong></div>
+      <div class="stat">🔥 Streak<strong>1 day</strong></div>
+    </div>
+  </div>
+  <div class="grid" style="margin-top:18px">
+    <div class="card"><h2>🎁 Daily Reward</h2><p class="muted">Claim your daily reward and build your streak.</p><button class="btn" onclick="go('rewards')">Open Rewards</button></div>
+    <div class="card"><h2>🎬 Watch Shorts</h2><p class="muted">Watch videos uploaded to this platform and earn the platform reward.</p><button class="btn secondary" onclick="go('shorts')">Watch Shorts</button></div>
+  </div>
+</section>
+
+<section id="shorts" class="page">
+  <h1 class="heading">Shorts</h1><p class="muted">Watch platform videos. Each slot can give a one-time daily reward.</p>
+  <div id="videoList" class="card"></div>
+</section>
+
+<section id="rewards" class="page">
+  <h1 class="heading">Rewards</h1><p class="muted">Daily Treasure and Spin rewards.</p>
+  <div class="grid">
+    <div class="card streak-card" style="grid-column:1/-1">
+      <div class="streak-head">
+        <div><span class="pill">7 DAY STREAK</span><h2 style="margin:10px 0 5px">🎁 Daily Treasure</h2><p class="muted" style="margin:0">Check in every day and keep your streak alive.</p></div>
+        <div class="today-box"><small>TODAY'S REWARD</small><strong>Rs. 7</strong></div>
+      </div>
+      <div class="streak-days">
+        <div class="day current"><div class="dayno">DAY 1</div><div class="coin">🎁</div><strong>Rs. 2</strong></div>
+        <div class="day"><div class="dayno">DAY 2</div><div class="coin">🎁</div><strong>Rs. 3</strong></div>
+        <div class="day"><div class="dayno">DAY 3</div><div class="coin">🎁</div><strong>Rs. 5</strong></div>
+        <div class="day"><div class="dayno">DAY 4</div><div class="coin">🎁</div><strong>Rs. 7</strong></div>
+        <div class="day"><div class="dayno">DAY 5</div><div class="coin">🎁</div><strong>Rs. 8</strong></div>
+        <div class="day"><div class="dayno">DAY 6</div><div class="coin">🎁</div><strong>Rs. 10</strong></div>
+        <div class="day"><div class="dayno">DAY 7</div><div class="coin">🏆</div><strong>Rs. 15</strong></div>
+      </div>
+      <div class="progress"><div></div></div>
+      <div class="reward-bottom">
+        <span class="muted">🔥 Keep checking in daily to build your streak.</span>
+        <button class="btn" onclick="claimDaily()">Claim Today's Rs. 7</button>
+      </div>
+      <div class="social-wrap">
+        <div class="social-title">🌐 My Social Pages</div>
+        <div class="socials">
+          <a class="social" href="https://www.youtube.com/@AmazingCreating" target="_blank" rel="noopener">▶️ YouTube <span>@AmazingCreating</span></a>
+          <a class="social" href="https://www.instagram.com/syed.raza622/?hl=en" target="_blank" rel="noopener">📸 Instagram <span>@syed.raza622</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card spin-card">
+      <span class="pill">DAILY SPIN</span><h2>🎡 Lucky Spin</h2><p class="muted">Spin once per day for a random platform reward.</p>
+      <div class="spin-wheel"><div class="spin-pointer"></div></div>
+      <div class="spin-prizes"><div class="prize">Rs. 0</div><div class="prize">Rs. 0</div><div class="prize">Rs. 7</div><div class="prize">Rs. 7</div></div>
+      <button class="btn" style="width:100%;margin-top:15px" onclick="spin()">🎡 Spin Now</button>
+    </div>
+
+    <div class="card">
+      <span class="pill">REWARD INFO</span><h2>✨ Simple & Clear</h2>
+      <p class="muted">Daily Treasure gives Rs.7 today. Lucky Spin has four possible outcomes: Rs.0, Rs.0, Rs.7 and Rs.7.</p>
+      <div class="card" style="background:#fafaff;margin-top:12px"><strong>💡 Tip</strong><p class="muted" style="margin-bottom:0">Come back every day to keep your streak active.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="wallet" class="page">
+  <h1 class="heading">Wallet</h1><p class="muted">Your platform reward history.</p>
+  <div class="card"><div class="balance">Rs. <span id="walletBalance">0</span></div><div class="history" id="history"></div></div>
+</section>
+
+<section id="withdraw" class="page">
+  <h1 class="heading">Withdraw</h1><p class="muted">Minimum withdrawal is Rs.300.</p>
+  <div class="card" style="max-width:560px">
+    <div class="form">
+      <input id="withdrawAmount" type="number" min="300" placeholder="Amount (minimum Rs.300)">
+      <select id="withdrawMethod"><option>Easypaisa</option><option>JazzCash</option><option>Bank Transfer</option></select>
+      <input id="withdrawAccount" placeholder="Account / IBAN / Mobile number">
+      <button class="btn" onclick="withdraw()">Request Withdrawal</button>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="page">
+  <h1 class="heading">About</h1>
+  <div class="card"><h2>EarnToShorts</h2><p class="muted">A rewards-style platform for watching videos uploaded to this website, daily rewards and spin rewards.</p><p class="muted">Rewards shown in this frontend are platform/demo balances. Real withdrawals require a secure server-side backend and payment processing.</p></div>
+</section>
+
+<section id="admin" class="page">
+  <h1 class="heading">Admin Panel</h1><p class="muted">Admin-only content management demo.</p>
+  <div class="card">
+    <div class="admin-grid">
+      <div class="form"><input id="vTitle" placeholder="Video title"><input id="vUrl" placeholder="Video URL"><input id="vSlot" type="number" min="1" max="5" placeholder="Slot 1-5"><button class="btn" onclick="saveVideo()">Save / Update Slot</button></div>
+      <div><h3>Current Slots</h3><div id="adminVideos"></div></div>
+    </div>
+  </div>
+</section>
+</main>
+</div>
+
+<nav class="mobile-nav">
+<button onclick="go('dashboard')">🏠<br>Home</button><button onclick="go('shorts')">🎬<br>Shorts</button><button onclick="go('rewards')">🎁<br>Rewards</button><button onclick="go('wallet')">💰<br>Wallet</button><button onclick="go('withdraw')">💸<br>Withdraw</button>
+</nav>
+
+<div id="authModal" class="auth-overlay"><div class="auth-box"><button class="close" onclick="closeAuth()">×</button><h2>🔐 Login / Register</h2><p class="muted">Sign in to continue to EarnToShorts.</p><div class="auth-tabs"><button id="loginTab" class="auth-tab active" onclick="showAuth('login')">Login</button><button id="registerTab" class="auth-tab" onclick="showAuth('register')">Register</button></div><button class="google-btn" onclick="continueGoogle()">🇬 Continue with Google</button><div class="auth-divider">OR</div><div id="registerNameWrap" class="form" style="display:none;margin-bottom:11px"><input id="authName" placeholder="Full name"></div><div class="form"><input id="authEmail" type="email" placeholder="Email address"><input id="authPassword" type="password" placeholder="Password"></div><button class="btn" style="width:100%;margin-top:12px" onclick="submitAuth()">Continue</button><p id="authStatus" class="muted" style="font-size:12px;margin-bottom:0"></p></div></div><div id="adminModal" class="modal">
+ <div class="modal-box"><button class="close" onclick="closeAdmin()">×</button><h2>🔐 Admin Access</h2><p class="muted">Enter admin PIN.</p><div class="form"><input id="adminPin" type="password" placeholder="PIN"><button class="btn" onclick="verifyAdmin()">Enter Admin</button></div></div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+let authMode="login";function openAuth(){document.getElementById("authModal").classList.add("show");showAuth("login")}function closeAuth(){document.getElementById("authModal").classList.remove("show")}function showAuth(mode){authMode=mode;document.getElementById("loginTab").classList.toggle("active",mode==="login");document.getElementById("registerTab").classList.toggle("active",mode==="register");document.getElementById("registerNameWrap").style.display=mode==="register"?"grid":"none";document.getElementById("authStatus").textContent=""}function submitAuth(){const email=document.getElementById("authEmail").value.trim().toLowerCase(),pass=document.getElementById("authPassword").value;if(!email||!pass){document.getElementById("authStatus").textContent="Please enter your email and password.";return}const users=JSON.parse(localStorage.getItem("ets_users")||"{}");if(authMode==="register"){const name=document.getElementById("authName").value.trim();if(!name){document.getElementById("authStatus").textContent="Please enter your name.";return}if(users[email]){document.getElementById("authStatus").textContent="Account already exists. Please login.";return}users[email]={name,email,password:pass};localStorage.setItem("ets_users",JSON.stringify(users));localStorage.setItem("ets_current_user",JSON.stringify({name,email,provider:"email"}));closeAuth();toast("Registration successful.")}else{if(!users[email]||users[email].password!==pass){document.getElementById("authStatus").textContent="Invalid email or password.";return}localStorage.setItem("ets_current_user",JSON.stringify({name:users[email].name,email,provider:"email"}));closeAuth();toast("Login successful.")}}function continueGoogle(){alert("Google Sign-In UI is ready. Real Google authentication requires OAuth/Firebase setup.")}
+const KEY="ets_final_state";
+let state=JSON.parse(localStorage.getItem(KEY)||'null')||{balance:0,watched:0,rewards:0,history:[],videos:[
+ {slot:1,title:"Short 1",url:""},
+ {slot:2,title:"Short 2",url:""},
+ {slot:3,title:"Short 3",url:""},
+ {slot:4,title:"Short 4",url:""},
+ {slot:5,title:"Short 5",url:""}
+]};
+function save(){localStorage.setItem(KEY,JSON.stringify(state));render();}
+function toast(t){const x=document.getElementById("toast");x.textContent=t;x.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>x.style.display="none",2600)}
+function addReward(amount,text){state.balance+=amount;state.rewards++;state.history.unshift({text,amount,date:new Date().toLocaleString()});save();toast(amount?`Rs.${amount} added to your wallet`:"No reward this time");}
+function render(){
+ document.getElementById("balance").textContent=state.balance;
+ document.getElementById("topBalance").textContent=state.balance;
+ document.getElementById("walletBalance").textContent=state.balance;
+ document.getElementById("watched").textContent=state.watched;
+ document.getElementById("rewardsCount").textContent=state.rewards;
+ renderVideos();renderHistory();renderAdmin();
+}
+function go(page){
+ document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+ document.getElementById(page).classList.add("active");
+ document.querySelectorAll(".side button").forEach(x=>x.classList.remove("active"));
+ window.scrollTo(0,0);
+}
+function claimDaily(){
+ const key="ets_daily_"+new Date().toDateString();
+ if(localStorage.getItem(key)){toast("Today's Daily Treasure is already claimed.");return}
+ localStorage.setItem(key,"1");addReward(7,"Daily Treasure — Rs.7");
+}
+function spin(){
+ const key="ets_spin_"+new Date().toDateString();
+ if(localStorage.getItem(key)){toast("Today's spin is already used.");return}
+ localStorage.setItem(key,"1");
+ const rewards=[0,0,7,7], r=rewards[Math.floor(Math.random()*rewards.length)];
+ addReward(r,`Daily Spin — Rs.${r}`);
+}
+function watch(url,slot){
+ state.watched++;
+ const key="ets_watch_"+new Date().toDateString()+"_"+slot;
+ if(!localStorage.getItem(key)){localStorage.setItem(key,"1");addReward(15,"Video watch reward — Short "+slot)}
+ else{save();toast("Video opened. Reward already claimed today.")}
+ if(url)window.open(decodeURIComponent(url),"_blank");else toast("Video opened.");
+}
+function renderVideos(){
+ const box=document.getElementById("videoList");
+ box.innerHTML=state.videos.map(v=>`<div class="video"><div><span class="pill">SLOT ${v.slot}</span><h3>${escapeHtml(v.title||"Untitled Short")}</h3><span class="muted">Daily platform watch reward: Rs.15</span></div><button class="btn" onclick="watch('${encodeURIComponent(v.url||"")}',${v.slot})">▶ Watch</button></div>`).join("");
+}
+function renderHistory(){
+ document.getElementById("history").innerHTML=state.history.length?state.history.map(h=>`<div class="history-item"><div><strong>${escapeHtml(h.text)}</strong><br><small class="muted">${h.date}</small></div><span class="${h.amount>=0?'plus':'minus'}">${h.amount>=0?'+':''}Rs.${h.amount}</span></div>`).join(""):'<p class="muted">No transactions yet.</p>';
+}
+function saveVideo(){
+ const slot=Number(document.getElementById("vSlot").value),title=document.getElementById("vTitle").value.trim(),url=document.getElementById("vUrl").value.trim();
+ if(slot<1||slot>5){toast("Choose a slot from 1 to 5.");return}
+ state.videos[slot-1]={slot,title:title||("Short "+slot),url};save();toast("Only selected video slot was updated.");
+}
+function renderAdmin(){document.getElementById("adminVideos").innerHTML=state.videos.map(v=>`<div style="padding:8px 0;border-bottom:1px solid var(--border)"><strong>Slot ${v.slot}:</strong> ${escapeHtml(v.title)}</div>`).join("")}
+function openAdmin(){document.getElementById("adminModal").classList.add("show")}
+function closeAdmin(){document.getElementById("adminModal").classList.remove("show")}
+function verifyAdmin(){if(document.getElementById("adminPin").value==="1532"){closeAdmin();go("admin");toast("Admin access granted.")}else toast("Wrong admin PIN.")}
+function withdraw(){
+ const amount=Number(document.getElementById("withdrawAmount").value),account=document.getElementById("withdrawAccount").value.trim(),method=document.getElementById("withdrawMethod").value;
+ if(amount<300){toast("Minimum withdrawal is Rs.300.");return}
+ if(amount>state.balance){toast("Insufficient balance.");return}
+ if(!account){toast("Enter your payment account.");return}
+ state.balance-=amount;state.history.unshift({text:`Withdrawal pending for 12 hours — ${method}`,amount:-amount,date:new Date().toLocaleString()});save();toast("Your withdrawal is pending for 12 hours.");
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+render();
+</script>
+</body>
+</html>
